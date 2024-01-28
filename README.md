@@ -11,4 +11,4 @@ Run `npm run dev` to start development server with auto reload. Make sure all re
 - `PORT` port for server to listen 
 
 ### Deployment
-Set `NODE_ENV` to `production` to omit debug log, run `npm run start` to apply migration and start production server
+Set `NODE_ENV` to `production` to omit debug log, run `npm run start` to apply migration and start production server. This app already deployed to https://broken-snow-8022.fly.dev
