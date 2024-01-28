@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String
+  isAdmin    Boolean     @default(false) @map("is_admin")
+  credential Credential?
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  @@map("user")
+}
+
+model Credential {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  userId   Int    @unique @map("user_id")
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("credential")
+}
+
+model VehicleBrand {
+  id         Int         @id @default(autoincrement())
+  name       String
+  types      VehicleType[]
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  @@map("vehicle_brand")
+}
+
+model VehicleType {
+  id        Int            @id @default(autoincrement())
+  name      String
+  brandId   Int            @map("brand_id")
+  brand     VehicleBrand   @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  models    VehicleModel[]
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @default(now()) @updatedAt @map("updated_at")
+
+  @@map("vehicle_type")
+}
+
+model VehicleModel {
+  id        Int         @id @default(autoincrement())
+  name      String
+  typeId    Int         @map("type_id")
+  type      VehicleType @relation(fields: [typeId], references: [id], onDelete: Cascade)
+  priceLists PriceList[]
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  @@map("vehicle_model")
+}
+
+model VehicleYear {
+  id         Int         @id @default(autoincrement())
+  year       Int
+  priceLists PriceList[]
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  @@map("vehicle_year")
+}
+
+model PriceList {
+  id        Int          @id @default(autoincrement())
+  code      String
+  price     Float
+  yearId    Int          @map("year_id")
+  year      VehicleYear  @relation(fields: [yearId], references: [id], onDelete: Cascade)
+  modelId  Int          @map("model_id")
+  model     VehicleModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @default(now()) @updatedAt @map("updated_at")
+
+  @@map("price_list")
+}
